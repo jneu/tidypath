@@ -33,49 +33,53 @@ check_for_duplicate (const element * array, size_t num_entries, const char *frag
 char *
 tidypath (const char *pathlike, const options * opts)
 {
-  element *element_array = malloc (TIDYPATH_ELEMENTS_ARRAY_START_SIZE * sizeof (element));
-  if (NULL == element_array)
-    {
-      return NULL;
-    }
-
-  const char *current_position = pathlike;
+  element *element_array = NULL;
   size_t element_index = 0;
-  size_t element_array_length = TIDYPATH_ELEMENTS_ARRAY_START_SIZE;
+  size_t element_array_length = 0;
+  const char *current_position = pathlike;
 
   for (;;)
     {
       const char *next_colon = strchrnul (current_position, opts->delimiter);
       size_t current_length = (size_t) (next_colon - current_position);
 
-      const char *current_fragment;
-      if (0 == current_length)
+      if (!opts->ignore_empty || (current_length > 0))
         {
-          current_fragment = ".";
-          current_length = 1;
-        }
-      else
-        {
-          current_fragment = current_position;
-        }
-
-      if (!check_for_duplicate (element_array, element_index, current_fragment, current_length))
-        {
-          if (element_index == element_array_length)
+          const char *current_fragment;
+          if (0 == current_length)
             {
-              element *new_element_array = realloc (element_array, 2 * element_array_length * sizeof (element));
-              if (NULL == new_element_array)
-                {
-                  return NULL;
-                }
-
-              element_array = new_element_array;
-              element_array_length *= 2;
+              current_fragment = ".";
+              current_length = 1;
+            }
+          else
+            {
+              current_fragment = current_position;
             }
 
-          element *new_element = element_array + element_index++;
-          new_element->fragment = current_fragment;
-          new_element->length = current_length;
+          if (!check_for_duplicate (element_array, element_index, current_fragment, current_length))
+            {
+              if (element_index == element_array_length)
+                {
+                  size_t new_element_array_length = 2 * element_array_length;
+                  if (0 == new_element_array_length)
+                    {
+                      new_element_array_length = TIDYPATH_ELEMENTS_ARRAY_START_SIZE;
+                    }
+
+                  element *new_element_array = realloc (element_array, new_element_array_length * sizeof (element));
+                  if (NULL == new_element_array)
+                    {
+                      return NULL;
+                    }
+
+                  element_array = new_element_array;
+                  element_array_length = new_element_array_length;
+                }
+
+              element *new_element = element_array + element_index++;
+              new_element->fragment = current_fragment;
+              new_element->length = current_length;
+            }
         }
 
       if ('\0' == *next_colon)

@@ -174,10 +174,30 @@ main (int argc, char *argv[])
   char *pathlike = get_pathlike (*argv, prog_opts.env);
 
   /*
-   * Run tidypath
+   * Handle the eol
    */
-  char *tidy = tidypath (pathlike, &opts);
-  CHECK_FOR_NULL_ALLOC (tidy);
+  if (!prog_opts.ignore_eol && ('\0' != *pathlike))
+    {
+      char *eol = pathlike + strlen (pathlike) - 1;
+      if ('\n' == *eol)
+        {
+          *eol = '\0';
+        }
+    }
+
+  /*
+   * Run tidypath... or not
+   */
+  char *tidy;
+  if (prog_opts.nop)
+    {
+      tidy = pathlike;
+    }
+  else
+    {
+      tidy = tidypath (pathlike, &opts);
+      CHECK_FOR_NULL_ALLOC (tidy);
+    }
 
   return EXIT_SUCCESS;
 }
