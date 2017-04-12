@@ -6,6 +6,8 @@ AC_CONFIG_SRCDIR([tidypath.c])
 AC_PROG_CC
 AC_PROG_CC_C99
 
+AC_GNU_SOURCE
+
 AC_CHECK_FUNCS([strchrnul])
 
 AC_CONFIG_FILES([Makefile])
