@@ -1,0 +1,12 @@
+AC_INIT([tidypath], [0.0.3])
+AM_INIT_AUTOMAKE
+
+AC_CONFIG_SRCDIR([tidypath.c])
+
+AC_PROG_CC
+AC_PROG_CC_C99
+
+AC_CHECK_FUNCS([strchrnul])
+
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT

@@ -30,7 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TIDYPATH_VERSION "0.0.3"
+#define TIDYPATH_VERSION PACKAGE_VERSION
 
 static void
 check_for_null_alloc (void *p)
