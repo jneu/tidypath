@@ -1,22 +1,46 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2017 Joshua Neuheisel
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include "tidypath.h"
+#include "compat.h"
 
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#define TIDYPATH_VERSION "0.0.2"
+#define TIDYPATH_VERSION "0.0.3"
 
-#define CHECK_FOR_NULL_ALLOC(p) \
-  do \
-    { \
-      if (NULL == (p)) \
-        { \
-          fprintf (stderr, "memory allocation failed\n"); \
-          exit (EXIT_FAILURE); \
-        } \
-    } \
-  while (0)
+static void
+check_for_null_alloc (void *p)
+{
+  if (NULL == p)
+    {
+      fprintf (stderr, "memory allocation failed\n");
+      exit (EXIT_FAILURE);
+    }
+}
 
 static void
 show_version (void)
@@ -31,21 +55,20 @@ show_usage (void)
   show_version ();
 
   printf ("tidypath [options] [pathlike_string]\n");
-  printf ("    -a, --aggressive\n");
-  printf ("    -d, --delimiter <char>\n");
-  printf ("    -e, --env\n");
-  printf ("    -h, --help             show this help message and exit\n");
-  printf ("    -i, --ignore-empty\n");
-  printf ("    -l, --ignore-eol\n");
-  printf ("    -n, --nop\n");
-  printf ("    -p, --pretty-print\n");
-  printf ("    -V, --version          show the version of tidypath and exit\n");
+  printf ("    -a, --aggressive          prune absolute paths that match previous inodes, \n");
+  printf ("                              do not exist, or are not directories\n");
+  printf ("    -d, --delimiter <char>    specify the delimiter to use; defaults to :\n");
+  printf ("    -e, --env                 the first argument specifies the name of an environment variable to use\n");
+  printf ("    -h, --help                show this help message and exit\n");
+  printf ("    -i, --ignore-empty        prune empty paths\n");
+  printf ("    -n, --nop                 do not prune any paths for any reason\n");
+  printf ("    -p, --pretty-print        print each path separated by a newline\n");
+  printf ("    -V, --version             show the version of tidypath and exit\n");
 }
 
 typedef struct def_prog_options
 {
   bool env;
-  bool ignore_eol;
   bool nop;
   bool pretty_print;
   bool version;
@@ -73,7 +96,7 @@ parse_args (int argc, char ***p_argv, prog_options * prog_opts, options * opts)
   opts->delimiter = ':';
 
   int opts_rv;
-  while (-1 != (opts_rv = getopt_long (argc, *p_argv, "ad:ehilnpV", longopts, NULL)))
+  while (-1 != (opts_rv = getopt_long (argc, *p_argv, "ad:ehinpV", longopts, NULL)))
     {
       switch (opts_rv)
         {
@@ -92,9 +115,6 @@ parse_args (int argc, char ***p_argv, prog_options * prog_opts, options * opts)
           break;
         case 'i':
           opts->ignore_empty = true;
-          break;
-        case 'l':
-          prog_opts->ignore_eol = true;
           break;
         case 'n':
           prog_opts->nop = true;
@@ -119,7 +139,7 @@ parse_args (int argc, char ***p_argv, prog_options * prog_opts, options * opts)
     }
 }
 
-static char *
+static const char *
 get_pathlike_from_env (const char *env_var_name)
 {
   const char *env_value = getenv (env_var_name);
@@ -129,16 +149,13 @@ get_pathlike_from_env (const char *env_var_name)
       exit (EXIT_FAILURE);
     }
 
-  char *pathlike = strdup (env_value);
-  CHECK_FOR_NULL_ALLOC (pathlike);
-
-  return pathlike;
+  return env_value;
 }
 
-static char *
+static const char *
 get_pathlike (const char *argv0, bool use_env)
 {
-  char *pathlike;
+  const char *pathlike;
 
   if (NULL == argv0)
     {
@@ -150,11 +167,30 @@ get_pathlike (const char *argv0, bool use_env)
     }
   else
     {
-      pathlike = strdup (argv0);
-      CHECK_FOR_NULL_ALLOC (pathlike);
+      pathlike = argv0;
     }
 
   return pathlike;
+}
+
+static void
+pretty_print (const char *pathlike, char delimiter)
+{
+  const char *begin;
+  const char *end;
+
+  for (begin = pathlike, end = pathlike; '\0' != *end; begin = end + 1)
+    {
+      end = strchrnul (begin, delimiter);
+
+      size_t length = (size_t) (end - begin);
+      if (length > 0)
+        {
+          fwrite (begin, length, 1, stdout);
+        }
+
+      puts ("");
+    }
 }
 
 int
@@ -171,19 +207,7 @@ main (int argc, char *argv[])
   /*
    * Get our pathlike string
    */
-  char *pathlike = get_pathlike (*argv, prog_opts.env);
-
-  /*
-   * Handle the eol
-   */
-  if (!prog_opts.ignore_eol && ('\0' != *pathlike))
-    {
-      char *eol = pathlike + strlen (pathlike) - 1;
-      if ('\n' == *eol)
-        {
-          *eol = '\0';
-        }
-    }
+  const char *pathlike = get_pathlike (*argv, prog_opts.env);
 
   /*
    * Run tidypath... or not
@@ -191,13 +215,29 @@ main (int argc, char *argv[])
   char *tidy;
   if (prog_opts.nop)
     {
-      tidy = pathlike;
+      tidy = strdup (pathlike);
     }
   else
     {
       tidy = tidypath (pathlike, &opts);
-      CHECK_FOR_NULL_ALLOC (tidy);
     }
+  check_for_null_alloc (tidy);
+
+  /*
+   * Output the result
+   */
+  if (prog_opts.pretty_print)
+    {
+      pretty_print (tidy, opts.delimiter);
+    }
+  else
+    {
+      fputs (tidy, stdout);
+    }
+
+#if !NO_FREE
+  free (tidy);
+#endif
 
   return EXIT_SUCCESS;
 }
