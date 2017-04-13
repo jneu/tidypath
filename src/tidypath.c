@@ -23,7 +23,9 @@
  */
 
 #include "tidypath.h"
+#ifndef HAVE_STRCHRNUL
 #include "compat/strchrnul.h"
+#endif
 
 #include <stdlib.h>
 #include <string.h>
