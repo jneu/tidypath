@@ -1,7 +1,7 @@
 AC_INIT([tidypath], [0.0.3])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 
-AC_CONFIG_SRCDIR([tidypath.c])
+AC_CONFIG_SRCDIR([src/tidypath.c])
 
 AC_PROG_CC
 AC_PROG_CC_C99

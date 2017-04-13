@@ -23,14 +23,12 @@
  */
 
 #include "tidypath.h"
-#include "compat.h"
+#include "compat/strchrnul.h"
 
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define TIDYPATH_VERSION PACKAGE_VERSION
 
 static void
 check_for_null_alloc (void *p)
@@ -45,14 +43,13 @@ check_for_null_alloc (void *p)
 static void
 show_version (void)
 {
-  printf ("%s\n", TIDYPATH_VERSION);
+  printf ("%s\n", PACKAGE_VERSION);
 }
 
 static void
 show_usage (void)
 {
-  printf ("tidypath ");
-  show_version ();
+  printf (PACKAGE_STRING "\n\n");
 
   printf ("tidypath [options] [pathlike_string]\n");
   printf ("    -a, --aggressive          prune absolute paths that match previous inodes, \n");

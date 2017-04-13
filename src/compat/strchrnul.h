@@ -22,19 +22,9 @@
  * SOFTWARE.
  */
 
-#include "compat.h"
+#ifndef STRCHRNUL_H
+#define STRCHRNUL_H
 
-#include <string.h>
+char *strchrnul (const char *s, int c);
 
-char *
-strchrnul (const char *s, int c)
-{
-  const char *found = strchr (s, c);
-
-  if (NULL == found)
-    {
-      found = s + strlen (s);
-    }
-
-  return (char *) found;
-}
+#endif

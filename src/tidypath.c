@@ -23,7 +23,7 @@
  */
 
 #include "tidypath.h"
-#include "compat.h"
+#include "compat/strchrnul.h"
 
 #include <stdlib.h>
 #include <string.h>
