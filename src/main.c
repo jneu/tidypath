@@ -23,7 +23,7 @@
  */
 
 #include "tidypath.h"
-#ifndef HAVE_STRCHRNUL
+#if NEED_STRCHRNUL
 #include "compat/strchrnul.h"
 #endif
 
@@ -92,6 +92,9 @@ parse_args (int argc, char ***p_argv, prog_options * prog_opts, options * opts)
   memset (prog_opts, 0, sizeof (prog_options));
 
   memset (opts, 0, sizeof (options));
+#if !FREE_MEMORY
+  opts->allow_leaks = true;
+#endif
   opts->delimiter = ':';
 
   int opts_rv;
@@ -234,7 +237,7 @@ main (int argc, char *argv[])
       fputs (tidy, stdout);
     }
 
-#if !NO_FREE
+#if FREE_MEMORY
   free (tidy);
 #endif
 

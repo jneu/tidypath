@@ -31,6 +31,7 @@ typedef struct def_options
 {
   bool aggressive;
   bool ignore_empty;
+  bool allow_leaks;
   char delimiter;
 } options;
 

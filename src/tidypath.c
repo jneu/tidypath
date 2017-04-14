@@ -23,7 +23,7 @@
  */
 
 #include "tidypath.h"
-#ifndef HAVE_STRCHRNUL
+#if NEED_STRCHRNUL
 #include "compat/strchrnul.h"
 #endif
 
@@ -32,6 +32,8 @@
 #include <sys/stat.h>
 
 #define TIDYPATH_ELEMENTS_ARRAY_START_SIZE 32
+
+static options s_default_options = { false, false, false, ':' };
 
 typedef struct def_element
 {
@@ -85,6 +87,11 @@ should_keep (const element * array, size_t num_entries, const char *fragment, si
 char *
 tidypath (const char *pathlike, const options * opts)
 {
+  if (NULL == opts)
+    {
+      opts = &s_default_options;
+    }
+
   char *output = NULL;
 
   element *element_array = NULL;
@@ -188,17 +195,18 @@ tidypath (const char *pathlike, const options * opts)
   *p_output = '\0';
 
 DONE:
-#if !NO_FREE
-  if (element_index > 0)
+  if (!opts->allow_leaks)
     {
-      for (i = 0; i < element_index; i++)
+      if (element_index > 0)
         {
-          free (element_array[i].fragment);
-        }
+          for (i = 0; i < element_index; i++)
+            {
+              free (element_array[i].fragment);
+            }
 
-      free (element_array);
+          free (element_array);
+        }
     }
-#endif
 
   return output;
 }
