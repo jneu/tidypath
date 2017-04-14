@@ -66,7 +66,7 @@ $ tidypath --env CLASSPATH    # Operate on $CLASSPATH instead
 $ tidypath --aggressive       # _Really_ clean up $PATH
 ```
 
-`tidypath` supports command line options
+`tidypath` supports command line options:
 ```
 tidypath [options] [pathlike_string (defaults to $PATH)]
     -a, --aggressive          prune absolute paths that match previous inodes, 
