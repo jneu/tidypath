@@ -6,7 +6,7 @@ AC_INIT([tidypath], [0.0.6])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 # Needed for libtool
-AC_CONFIG_MACRO_DIRS([m4])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([src/tidypath.c])
 
 #

@@ -141,7 +141,11 @@ tidypath (const char *pathlike, const options * opts)
                   element *new_element_array = realloc (element_array, new_element_array_length * sizeof (element));
                   if (NULL == new_element_array)
                     {
-                      free (current_fragment);
+                      if (!opts->allow_leaks)
+                        {
+                          free (current_fragment);
+                        }
+
                       goto DONE;
                     }
 
@@ -159,12 +163,20 @@ tidypath (const char *pathlike, const options * opts)
                 }
 
             }
+          else
+            {
+              if (!opts->allow_leaks)
+                {
+                  free (current_fragment);
+                }
+            }
         }
     }
 
   if (0 == element_index)
     {
       output = strdup ("");
+
       goto DONE;
     }
 
