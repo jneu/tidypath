@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec autoreconf --install
+exec autoreconf --install "$@"
