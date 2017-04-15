@@ -99,12 +99,28 @@ should_keep (const element * array, size_t num_entries, const char *fragment, si
 char *
 tidypath (const char *pathlike, const options * opts)
 {
+  /*
+   * If we are passed a NULL string, return an empty string.
+   * This allows us to chain: `tidypath (getenv ("PATH"), NULL);`.
+   */
+  if (NULL == pathlike)
+    {
+      return strdup ("");
+    }
+
+  /*
+   * If no options are given, choose the defaults
+   */
   if (NULL == opts)
     {
       opts = &s_default_options;
     }
 
   char *output = NULL;
+
+  /*
+   * Loop over all the fragments, ignoring those we don't want to keep
+   */
 
   element *element_array = NULL;
   size_t element_index = 0;
@@ -208,6 +224,10 @@ tidypath (const char *pathlike, const options * opts)
       new_length += element_array[i].length;
     }
 
+  /*
+   * Create the output string and fill it in
+   */
+
   output = malloc (new_length);
   if (NULL == output)
     {
@@ -228,6 +248,9 @@ tidypath (const char *pathlike, const options * opts)
   *p_output = '\0';
 
 DONE:
+  /*
+   * If desired, free our interal allocations
+   */
   if (!opts->allow_leaks)
     {
       if (element_index > 0)

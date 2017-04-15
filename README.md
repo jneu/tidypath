@@ -24,8 +24,8 @@ $ make install
 If you received `tidypath` as a tarball, you don't need the GNU build tools.
 Instead, execute the following:
 ```
-$ tar xzf tidypath-0.0.6.tar.gz    # Your version may be different
-$ cd tidypath-0.0.6
+$ tar xzf tidypath-0.0.7.tar.gz    # Your version may be different
+$ cd tidypath-0.0.7
 $ ./configure
 $ make
 $ make check
