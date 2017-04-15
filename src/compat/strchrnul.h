@@ -25,6 +25,11 @@
 #ifndef STRCHRNUL_H
 #define STRCHRNUL_H
 
+/*
+ * strchrnul is the same as strchr except that, instead of returning NULL when c
+ * is not found, a pointer to the trailing '\0' char is returned.
+ */
+
 char *strchrnul (const char *s, int c);
 
 #endif

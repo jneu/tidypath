@@ -31,6 +31,7 @@ strchrnul (const char *s, int c)
 {
   const char *found = strchr (s, c);
 
+  // If c is not found, return a pointer to the trailing '\0' char
   if (NULL == found)
     {
       found = s + strlen (s);

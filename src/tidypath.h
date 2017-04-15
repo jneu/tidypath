@@ -27,18 +27,36 @@
 
 #include <stdbool.h>
 
+/*
+ * Options that control the behavior of tidypath.
+ *
+ * Aggressive pruning means remove any absolute paths that do not exist,
+ * are not directories, or match inodes with previous fragments.
+ */
+
 typedef struct def_options
 {
-  bool aggressive;
-  bool ignore_empty;
-  bool allow_leaks;
-  char delimiter;
+  bool aggressive;              // aggressive pruning
+  bool ignore_empty;            // prune empty paths
+  bool allow_leaks;             // do not free internal memory allocations
+  char delimiter;               // char that delimits fragments
 } options;
 
 /*
+ * tidypath takes a string and an optional options struct. If opts is NULL,
+ * default options are used: { false, false, false, ':' }
+ *
  * tidypath returns a newly allocated string, which should be free()-ed when no
  * longer needed. It returns NULL on any memory allocation errors.
+ *
+ * tidypath copies pathlike to the output string applying the following
+ * algorithm:
+ * 1. pathlike is logically separated into fragments separated by the delimiter
+ * 2. each empty fragment is logically converted to '.'
+ * 3. scanning left to right, each fragment which matches a previous fragment
+ *    is removed
  */
+
 char *tidypath (const char *pathlike, const options * opts);
 
 #endif

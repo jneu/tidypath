@@ -68,10 +68,10 @@ show_usage (void)
 
 typedef struct def_prog_options
 {
-  bool env;
-  bool nop;
-  bool pretty_print;
-  bool version;
+  bool env;                     // argv[1] represents the name of an environment var to use
+  bool nop;                     // do no pruning
+  bool pretty_print;            // print each fragment separated by a new-line
+  bool version;                 // show the version and exit
 } prog_options;
 
 static void
@@ -155,6 +155,13 @@ get_pathlike_from_env (const char *env_var_name)
   return env_value;
 }
 
+/*
+ * Find the string to operate on:
+ * 1. If no arg is given, use $PATH
+ * 2. If --env was specified, the first arg is the name of the env var to use
+ * 3. Otherwise, operate on the first arg
+ */
+
 static const char *
 get_pathlike (const char *argv0, bool use_env)
 {
@@ -192,7 +199,7 @@ pretty_print (const char *pathlike, char delimiter)
           fwrite (begin, length, 1, stdout);
         }
 
-      puts ("");
+      putchar ('\n');
     }
 }
 

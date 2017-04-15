@@ -31,6 +31,10 @@
 #include <string.h>
 #include <sys/stat.h>
 
+/*
+ * Start by allocating this many elements in our working array
+ */
+
 #define TIDYPATH_ELEMENTS_ARRAY_START_SIZE 32
 
 static options s_default_options = { false, false, false, ':' };
@@ -43,12 +47,20 @@ typedef struct def_element
   ino_t st_ino;
 } element;
 
+/*
+ * Determine if the fragment should be kept or pruned. Also, fill in the st_dev and st_ino fields
+ * if needed.
+ */
+
 static bool
 should_keep (const element * array, size_t num_entries, const char *fragment, size_t length, bool aggressive,
              dev_t * st_dev, ino_t * st_ino)
 {
   size_t i;
 
+  /*
+   * Special rules for absolute paths when performing aggressive pruning
+   */
   if (aggressive && ('/' == *fragment))
     {
       struct stat buf;
@@ -130,6 +142,9 @@ tidypath (const char *pathlike, const options * opts)
           if (should_keep (element_array, element_index, current_fragment, current_length, opts->aggressive,
                            &st_dev, &st_ino))
             {
+              /*
+               * If we don't have enough room in our working array, double it
+               */
               if (element_index == element_array_length)
                 {
                   size_t new_element_array_length = 2 * element_array_length;
@@ -173,6 +188,9 @@ tidypath (const char *pathlike, const options * opts)
         }
     }
 
+  /*
+   * If we have no fragments, return an empty string
+   */
   if (0 == element_index)
     {
       output = strdup ("");
@@ -180,6 +198,9 @@ tidypath (const char *pathlike, const options * opts)
       goto DONE;
     }
 
+  /*
+   * Compute the size of the output string
+   */
   size_t new_length = element_index;    // Room for (element_index - 1) delimiters and the trailing '\0'
   size_t i;
   for (i = 0; i < element_index; i++)
