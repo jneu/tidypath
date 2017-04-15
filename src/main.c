@@ -54,15 +54,15 @@ show_usage (void)
   printf (PACKAGE_STRING "\n\n");
 
   printf ("tidypath [options] [pathlike_string (defaults to $PATH)]\n");
-  printf ("    -a, --aggressive          prune absolute paths that match previous inodes, \n");
-  printf ("                              do not exist, or are not directories\n");
+  printf ("    -a, --aggressive          also prune absolute fragments that match previous\n");
+  printf ("                              inodes, do not exist, or are not directories\n");
   printf ("    -d, --delimiter <char>    specify the delimiter to use; defaults to :\n");
-  printf ("    -e, --env                 the first argument specifies the name of an\n");
+  printf ("    -e, --env                 the first argument will specify the name of an\n");
   printf ("                              environment variable to use\n");
   printf ("    -h, --help                show this help message and exit\n");
-  printf ("    -i, --ignore-empty        prune empty paths\n");
-  printf ("    -n, --nop                 do not prune any paths for any reason\n");
-  printf ("    -p, --pretty-print        print each path separated by a newline\n");
+  printf ("    -i, --ignore-empty        prune empty fragments\n");
+  printf ("    -n, --nop                 do not prune any fragments for any reason\n");
+  printf ("    -p, --pretty-print        print each fragment separated by a newline\n");
   printf ("    -V, --version             show the version of tidypath and exit\n");
 }
 
