@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -o errexit
+
+TESTDIR="${TMPDIR:-/tmp}/nop.test_$$"
+mkdir "$TESTDIR"
+
+A="/usr/local/bin:/usr/local/bin"
+
+echo -n "$A" > "$TESTDIR/a"
+
+export A
+./tidypath --nop --env A > "$TESTDIR/b"
+
+cmp "$TESTDIR/a" "$TESTDIR/b"
+
+rm -f "$TESTDIR/a" "$TESTDIR/b"
+rmdir "$TESTDIR"

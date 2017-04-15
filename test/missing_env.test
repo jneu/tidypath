@@ -1,0 +1,5 @@
+#!/bin/bash
+
+set -o errexit
+
+exec ./tidypath --env ENV_VAR_THAT_DOES_NOT_EXIST

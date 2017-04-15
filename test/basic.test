@@ -1,0 +1,19 @@
+#!/bin/bash
+
+set -o errexit
+
+TESTDIR="${TMPDIR:-/tmp}/basic.test_$$"
+mkdir "$TESTDIR"
+
+A="/usr/local/bin::/usr/local/bin"
+A1="/usr/local/bin:."
+
+echo -n "$A1" > "$TESTDIR/a"
+
+export A
+./tidypath --env A > "$TESTDIR/b"
+
+cmp "$TESTDIR/a" "$TESTDIR/b"
+
+rm -f "$TESTDIR/a" "$TESTDIR/b"
+rmdir "$TESTDIR"

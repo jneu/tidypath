@@ -33,7 +33,14 @@ endif
 include_HEADERS = src/tidypath.h
 
 #
+# Tests to be run
+#
+
+TESTS = test/basic.test test/nop.test test/missing_env.test
+XFAIL_TESTS = test/missing_env.test
+
+#
 # Extras to include in `make dist`
 #
 
-EXTRA_DIST = .gitignore LICENSE README.md prep_build.bash
+EXTRA_DIST = .gitignore LICENSE README.md prep_build.bash $(TESTS)
