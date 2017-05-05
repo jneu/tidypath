@@ -1,5 +1,22 @@
-.DS_Store
+# target files
+tidypath
+libtidypath.la
 
+# folder and project files
+.DS_Store
+.idea
+tidypath.iml
+
+# dev files
+*~
+*.lo
+*.log
+*.o
+*.swp
+*.trs
+.libs
+
+# autoconf and automake files
 .deps
 .dirstamp
 Makefile

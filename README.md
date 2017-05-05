@@ -5,7 +5,7 @@ normalizing empty fragments. Add the following, or its equivalent, to the
 bottom of the appropriate startup script (e.g., `~/.profile`,
 `~/.bash_profile`) for your shell:
 ```
-export PATH="`tidypath`"
+hash tidypath && export PATH="`tidypath`"
 ```
 
 ## Installation
@@ -52,7 +52,7 @@ up PATH and PATH-like strings by removing duplicate entries and changing all
 empty fragments into `.`. Typical usage would be to add something like the
 following to the appropriate shell startup script:
 ```
-export PATH="`tidypath`"
+hash tidypath && export PATH="`tidypath`"
 ```
 
 Other examples:
@@ -77,6 +77,6 @@ tidypath [options] [pathlike_string (defaults to $PATH)]
     -h, --help                show this help message and exit
     -i, --ignore-empty        prune empty fragments
     -n, --nop                 do not prune any fragments for any reason
-    -p, --pretty-print        print each fragment separated by a newline
+    -p, --pretty              print each fragment separated by a newline
     -V, --version             show the version of tidypath and exit
 ```

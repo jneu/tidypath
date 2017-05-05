@@ -62,7 +62,7 @@ show_usage (void)
   printf ("    -h, --help                show this help message and exit\n");
   printf ("    -i, --ignore-empty        prune empty fragments\n");
   printf ("    -n, --nop                 do not prune any fragments for any reason\n");
-  printf ("    -p, --pretty-print        print each fragment separated by a newline\n");
+  printf ("    -p, --pretty              print each fragment separated by a newline\n");
   printf ("    -V, --version             show the version of tidypath and exit\n");
 }
 
@@ -70,7 +70,7 @@ typedef struct def_prog_options
 {
   bool env;                     // argv[1] represents the name of an environment var to use
   bool nop;                     // do no pruning
-  bool pretty_print;            // print each fragment separated by a new-line
+  bool pretty;                  // print each fragment separated by a new-line
   bool version;                 // show the version and exit
 } prog_options;
 
@@ -85,7 +85,7 @@ parse_args (int argc, char ***p_argv, prog_options * prog_opts, options * opts)
     {"ignore-empty", no_argument, NULL, 'i'},
     {"ignore-eol", no_argument, NULL, 'l'},
     {"nop", no_argument, NULL, 'n'},
-    {"pretty-print", no_argument, NULL, 'p'},
+    {"pretty", no_argument, NULL, 'p'},
     {"version", no_argument, NULL, 'V'},
     {NULL, 0, NULL, 0}
   };
@@ -123,7 +123,7 @@ parse_args (int argc, char ***p_argv, prog_options * prog_opts, options * opts)
           prog_opts->nop = true;
           break;
         case 'p':
-          prog_opts->pretty_print = true;
+          prog_opts->pretty = true;
           break;
         case 'V':
           prog_opts->version = true;
@@ -236,7 +236,7 @@ main (int argc, char *argv[])
   /*
    * Output the result
    */
-  if (prog_opts.pretty_print)
+  if (prog_opts.pretty)
     {
       pretty_print (tidy, opts.delimiter);
     }

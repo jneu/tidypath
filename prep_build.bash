@@ -7,7 +7,7 @@
 
 set -o errexit
 
-if test ! -f README.md; then
+if ! [ -f README.md ]; then
     echo "prep_build.bash must be run from the top level directory" 1>&2
     exit 1
 fi
