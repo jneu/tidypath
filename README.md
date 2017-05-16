@@ -9,9 +9,15 @@ hash tidypath && export PATH="`tidypath`"
 ```
 
 ## Installation
+If you use the [Homebrew](https://brew.sh/) package manager on macOS, you
+can add the `tidypath` tap and install directly:
+```
+$ brew tap jneu/tidypath
+$ brew install tidypath
+```
+
 `tidypath` uses the GNU build system. To build directly from the github source,
-you'll need Autoconf, Automake, and Libtool. Execute the following (`$`
-represents the shell prompt):
+you'll need Autoconf, Automake, and Libtool. Execute the following:
 ```
 $ git clone https://github.com/jneu/tidypath.git
 $ cd tidypath
@@ -24,8 +30,8 @@ $ sudo make install
 If you received `tidypath` as a tarball, you don't need the GNU build tools.
 Instead, execute the following:
 ```
-$ tar xzf tidypath-0.0.9.tar.gz    # Your version may be different
-$ cd tidypath-0.0.9
+$ tar xzf tidypath-0.1.0.tar.gz    # Your version may be different
+$ cd tidypath-0.1.0
 $ ./configure
 $ make
 $ make check

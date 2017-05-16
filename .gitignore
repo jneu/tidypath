@@ -1,6 +1,7 @@
 # target files
 tidypath
 libtidypath.la
+tidypath-*.tar.gz
 
 # folder and project files
 .DS_Store
