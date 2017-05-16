@@ -2,7 +2,7 @@
 # Autoconf (and automake and libtool) configuration for tidypath
 #
 
-AC_INIT([tidypath], [0.1.0])
+AC_INIT([tidypath], [0.1.1])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 # Needed for libtool
