@@ -5,7 +5,7 @@ shared:
 jobs:
   main:
     steps:
-      - run_arbitrary_script: ./configure
-      - make_target: make
-      - make_target: make check
-      - make_target: make dist
+      - configure: ./configure
+      - build: make
+      - test: make check
+      - package: make dist
