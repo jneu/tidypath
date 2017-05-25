@@ -1,11 +1,20 @@
 ---
+workflow:
+  - test
+  - package
+
 shared:
   image: buildpack-deps
 
 jobs:
   main:
     steps:
+      - prepare: ./prep_build.bash
       - configure: ./configure
       - build: make
+  test:
+    steps:
       - test: make check
+  package:
+    steps:
       - package: make dist
