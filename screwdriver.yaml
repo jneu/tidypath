@@ -1,0 +1,11 @@
+---
+shared:
+  image: buildpack-deps
+
+jobs:
+  main:
+    steps:
+      - make_target: ./configure
+      - make_target: make
+      - make_target: make check
+      - make_target: make dist
