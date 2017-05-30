@@ -1,0 +1,11 @@
+---
+jobs:
+    main:
+        image: buildpack-deps
+        steps:
+            - prepare: ./prep_build.bash
+            - configure: ./configure
+            - build: make
+            - test: make check
+            - package: make dist
+            - save: cp -vf tidypath $SD_ARTIFACTS_DIR
