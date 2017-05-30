@@ -8,4 +8,4 @@ jobs:
             - build: make
             - test: make check
             - package: make dist
-            - save: cp -vf tidypath{,-*.tar.gz} $SD_ARTIFACTS_DIR
+            - save: cp -vf tidypath $SD_ARTIFACTS_DIR'
