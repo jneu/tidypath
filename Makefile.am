@@ -43,4 +43,4 @@ XFAIL_TESTS = test/missing_env.test
 # Extras to include in `make dist`
 #
 
-EXTRA_DIST = .gitignore LICENSE README.md prep_build.bash $(TESTS)
+EXTRA_DIST = .gitignore LICENSE README.md bootstrap $(TESTS)

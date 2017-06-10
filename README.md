@@ -21,7 +21,7 @@ you'll need Autoconf, Automake, and Libtool. Execute the following:
 ```
 $ git clone https://github.com/jneu/tidypath.git
 $ cd tidypath
-$ ./prep_build.bash
+$ ./bootstrap
 $ ./configure
 $ make
 $ make check
