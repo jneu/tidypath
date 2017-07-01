@@ -177,7 +177,7 @@ tidypath (const char *pathlike, const options * opts)
                     }
 
                   size_t new_element_array_length;
-                  if (0 == new_element_array_length)
+                  if (0 == element_array_length)
                     {
                       new_element_array_length = TIDYPATH_ELEMENTS_ARRAY_START_SIZE;
                     }
