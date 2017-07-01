@@ -27,6 +27,7 @@
 #include "compat/strchrnul.h"
 #endif
 
+#include <err.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,8 +38,7 @@ check_for_null_alloc (void *p)
 {
   if (NULL == p)
     {
-      fprintf (stderr, "memory allocation failed\n");
-      exit (EXIT_FAILURE);
+      err (EXIT_FAILURE, NULL);
     }
 }
 
@@ -148,8 +148,7 @@ get_pathlike_from_env (const char *env_var_name)
   const char *env_value = getenv (env_var_name);
   if (NULL == env_value)
     {
-      fprintf (stderr, "%s environment variable not found\n", env_var_name);
-      exit (EXIT_FAILURE);
+      errx (EXIT_FAILURE, "%s environment variable not found", env_var_name);
     }
 
   return env_value;
