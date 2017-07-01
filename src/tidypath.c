@@ -27,18 +27,18 @@
 #include "compat/strchrnul.h"
 #endif
 
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
 
-/*
- * Start by allocating this many elements in our working array
- */
-
+// Start by allocating this many elements in our working array
 #define TIDYPATH_ELEMENTS_ARRAY_START_SIZE 32
 
+// Create default options that are used if tidypath is called with NULL opts
 static options s_default_options = { false, false, false, ':' };
 
+// Struct to hold metadata about each path fragment
 typedef struct def_element
 {
   char *fragment;
@@ -116,6 +116,7 @@ tidypath (const char *pathlike, const options * opts)
       opts = &s_default_options;
     }
 
+  // Set the output string to NULL in case we need to bail on an error
   char *output = NULL;
 
   /*
@@ -159,14 +160,30 @@ tidypath (const char *pathlike, const options * opts)
                            &st_dev, &st_ino))
             {
               /*
-               * If we don't have enough room in our working array, double it
+               * If we don't have enough room in our working array, double it...
                */
               if (element_index == element_array_length)
                 {
-                  size_t new_element_array_length = 2 * element_array_length;
+                  // ... but check for overflow!
+                  if (element_array_length > (SIZE_MAX / 2 / sizeof (element)))
+                    {
+                      if (!opts->allow_leaks)
+                        {
+                          free (current_fragment);
+                        }
+
+                      errno = ENOMEM;
+                      goto DONE;
+                    }
+
+                  size_t new_element_array_length;
                   if (0 == new_element_array_length)
                     {
                       new_element_array_length = TIDYPATH_ELEMENTS_ARRAY_START_SIZE;
+                    }
+                  else
+                    {
+                      new_element_array_length = 2 * element_array_length;
                     }
 
                   element *new_element_array = realloc (element_array, new_element_array_length * sizeof (element));
@@ -215,14 +232,24 @@ tidypath (const char *pathlike, const options * opts)
     }
 
   /*
-   * Compute the size of the output string
+   * Compute the size of the output string...
    */
-  size_t new_length = element_index;    // Room for (element_index - 1) delimiters and the trailing '\0'
+  size_t new_length = 0;
+
   size_t i;
   for (i = 0; i < element_index; i++)
     {
       new_length += element_array[i].length;
     }
+
+  // ... but watch for overflow!
+  if (new_length > (SIZE_MAX - element_index))
+    {
+      errno = ENOMEM;
+      goto DONE;
+    }
+
+  new_length += element_index;  // Room for (element_index - 1) delimiters and the trailing '\0'
 
   /*
    * Create the output string and fill it in
